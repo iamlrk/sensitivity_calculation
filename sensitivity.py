@@ -4,17 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def calculate_efficiency(density, thickness, mass_attentuation_coefficients):
-    return [1 - np.exp(_mu)*(density * thickness) for _mu in mass_attentuation_coefficients]
-
-def calculate_cosmic_bg(energies, solid_angle, efficiencies):
-    return [solid_angle*efficiency*(87.4*energy**(-2.3)) for efficiency, energy in zip(efficiencies, energies)]
-
-def calculate_shield_bg(shield_leakage_bg_count_rates, thickness):
-    return [leaks * np.exp(1-(thickness/5)) for leaks in shield_leakage_bg_count_rates]
-
-def calculate_neutron_spallation_bg(rigidity_cut_off, energy_counts): # from fig 5
-    return  [rigidity_cut_off * counts for counts in energy_counts]
 
 class Background():
     def __init__(self, 
