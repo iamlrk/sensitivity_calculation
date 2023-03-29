@@ -74,7 +74,7 @@ class Background():
     
     def calculate_neutron_spallation_bg(self): # from fig 5
         self.spallation =  np.array([self.rigidity_cut_off * counts for counts in self.energy_counts])
-        correction = self.thickness * self.density * self.area / (3.67 * 8800)
+        correction = self.thickness * self.density * self.area * self.efficiencies / (3.67 * 8800)
         self.spallation *= correction
         return self.spallation
     
