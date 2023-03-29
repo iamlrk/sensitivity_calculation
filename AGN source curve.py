@@ -22,8 +22,8 @@ b = 1.56
 for i in range(0, 50):
     I = quad(integrand, l, h, args=(a,b))
     energy.append(l)
-    photons.append(I[0])
-    error.append(I[1])
+    photons.append(I[0]) ##photons/cm2/s/keV
+    error.append(I[1]) ##error on integral calculation
     l = l + 10
     h = h + 10
     count = count + 1
