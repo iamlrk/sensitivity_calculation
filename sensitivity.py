@@ -108,7 +108,7 @@ def ourmission():
         'shield_thickness' : 10, # cm 
         'mass_attentuation_coefficients' : mass_attentuation_coefficients, 
         'energies' : energies, # keV
-        'solid_angle' : 0.7, # sterdaiens
+        'solid_angle' : 0.7, # steradians
         'shield_leakage_bg_count_rates' : bg_curves['fig8'].values,
         'rigidity_cut_off' : 1.3,  
         'energy_counts' : bg_curves['fig5'].values,
