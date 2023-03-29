@@ -33,7 +33,7 @@ class Background():
         self.material = material
 
     def calculate_efficiency(self):
-        self.efficiencies = [1 - np.exp(-_mu*self.density * self.thickness) for _mu in self.mass_attentuation_coefficients]
+        self.efficiencies = np.array([1 - np.exp(-_mu*self.density * self.thickness) for _mu in self.mass_attentuation_coefficients])
         return self.efficiencies
 
     def calculate_cosmic_bg(self):
@@ -41,16 +41,32 @@ class Background():
         self.cosmic_bg = np.array([self.solid_angle*efficiency*(87.4*energy**(-2.3)) for efficiency, energy in zip(self.efficiencies, self.energies)])
         return self.cosmic_bg
     
-    def ploty(self, ax, show_plot=True):
-        ax.plot(self.energies, self.cosmic_bg, label=f'{self.material} - Cosmic Background')
-        ax.plot(self.energies, self.shield_leakage, label=f'{self.material} - Shield Leakage')
-        ax.plot(self.energies, self.spallation, label=f'{self.material} - Neutron Spallation')
-        ax.plot(self.energies, self.total_bg, label=f'{self.material} - Total Background')
-        ax.legend()
-        ax.set_title('Background')
+    def ploty(self, ax, show_plot=True, type='background'):
+        if type == 'background':
+            ax.plot(self.energies, self.cosmic_bg, label=f'{self.material} - Cosmic Background')
+            ax.plot(self.energies, self.shield_leakage, label=f'{self.material} - Shield Leakage')
+            ax.plot(self.energies, self.spallation, label=f'{self.material} - Neutron Spallation')
+            ax.plot(self.energies, self.total_bg, label=f'{self.material} - Total Background')
+            ax.grid(which='both')
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+            ax.legend()
+            ax.set_title('Background')
+            
+        elif type == 'efficiency':
+            ax.plot(self.energies, self.efficiencies, '--', label=f'{self.material} Efficiency')
+            ax.plot(self.energies, self.efficiencies/2, label=f'{self.material} Efficiency Corrected')
+            
+            ax.legend()
+            ax.set_xscale('log')
+            ax.set_yscale('log')
+            ax.set_title(f'{self.material} Efficiency')
+            ax.grid(which='both')
+        
         if show_plot:
             plt.show()
         return ax
+            
 
     def calculate_shield_leakage(self):
         self.shield_leakage = np.array([leaks * np.exp(1-(self.shield_thickness/5)) for leaks in self.shield_leakage_bg_count_rates])
@@ -69,7 +85,7 @@ class Background():
 
 
 class Sensitivity():
-    def __init__(self, detector_efficiency, energies, background_noise, area, obstime, material, sigma=3, units='kev') -> None:
+    def __init__(self, detector_efficiency, energies, solidangle, background_noise, area, obstime, material, sigma=3, units='kev') -> None:
         self.detector_efficiency = detector_efficiency
         self.energies = energies
         self.background_noise = background_noise
@@ -77,12 +93,14 @@ class Sensitivity():
         self.obstime = obstime
         self.sigma = sigma
         self.material = material
+        self.solidangle = solidangle
     
     def ploty(self, ax, show_plot=True):
-        ax.plot(self.energies, self.sensitivities * 1.4**2, label=f'{self.material}Sensitivity') # KEV_TO_ERGS)
+        ax.plot(self.energies, self.sensitivities * 1.4**2 * KEV_TO_ERGS, label=f'{self.material}Sensitivity') # KEV_TO_ERGS)
         ax.set_xscale('log')
         ax.set_yscale('log')
         ax.set_title('Sensitivity Plot')
+        ax.grid(which='both')
         ax.grid()
         ax.legend()
         if show_plot:
